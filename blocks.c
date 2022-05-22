@@ -117,7 +117,7 @@ int main(int argc, char *argv[]) {
 	size_t blocksize = 8 * 1024 * 1024;
 	char *output = NULL;
 	char ch;
-	while ((ch = getopt(argc, argv, ":srz:o:")) != -1) {
+	while ((ch = getopt(argc, argv, ":srvz:o:")) != -1) {
 		switch (ch) {
 		case 's':
 			split_flag = true;
@@ -125,6 +125,9 @@ int main(int argc, char *argv[]) {
 		case 'r':
 			recombine_flag = true;
 			break;
+		case 'v':
+			printf("blocks %s\n", VERSION);
+			return 0;
 		case 'z':
 			blocksize = conv_size_str(optarg);
 			if (blocksize == 0) error("-z flag is not a valid size");

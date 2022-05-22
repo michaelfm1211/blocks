@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #define USAGE "usage: blocks {-s | -r} [-z size] [-o filename] files ..."
+#define VERSION "v1.0.0"
 // default reading size is 1,048,576 bytes and default output name when
 // using with -r flag is "output.bin". both can be changed at compile time
 #define READING_SIZE 1024*1024
