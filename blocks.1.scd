@@ -6,7 +6,7 @@ blocks - generate and recombine _blocks_(5) archives
 
 # SYNOPYSIS
 
-*blocks* {-*s* | -*r*} [*-z* _size_] [*-o* _filename_] _files_ _..._
+*blocks* {*-s* | *-r*} [*-v*] [*-z* _size_] [*-o* _filename_] _files_ _..._
 
 # DESCRIPTION
 
@@ -23,6 +23,8 @@ include 0.plan.txt.blk, 7.mypresentation.pptx.blk, 27.hello_world.c.blk, and
 	file may be given as input.
 *-r*
 	Recombine the input _blocks_(5) archives into the original file.
+*-v*
+	Print the version of the program.
 *-z* _size_
 	Specify the maximum size of the resulting archives when using the *-s* 
 	option including a 40 byte header. _size_ may include the suffixes K, 
