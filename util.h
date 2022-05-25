@@ -18,7 +18,8 @@ size_t conv_size_str(const char *str);
 char *genfilename(const char *basename, uint64_t num);
 
 // Computes part of a Adler-32 hash. Can be used on multiple buffers to
-// compute a single hash.
+// compute a single hash. a must be initalized to 1 and b must be intialized
+// to 0
 void adler32_partial(uint8_t *buf, size_t size, uint16_t *a, uint16_t *b);
 
 // Computes the the Adler-32 hash of a buffer. Uses `adler32_part()` under the

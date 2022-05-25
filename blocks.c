@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,25 +20,42 @@ void split_file(const char *filename, size_t blocksize, const char
 	uint64_t total_blocks = filesize/blocksize;
 	if (filesize%blocksize != 0) total_blocks++;
 
+	// shared header stuff
+	struct blk_hdr header;
+	header.magic = BLK_MAGIC_V1;
+	header.flags = 0;
+	header.total_blocks = total_blocks;
+
 	if (output == NULL) output = filename;
 	uint8_t *buf = malloc(READING_SIZE);
-	uint64_t nread, i = 0;
-	while ((nread = fread(buf, 1, blocksize, file)) != 0) {
+	for(uint64_t i = 0; i < total_blocks; i++) {
 		char *out_filename = genfilename(output, i);
 		FILE *out = fopen(out_filename, "wb");
 		free(out_filename);
 
-		struct blk_hdr header;
-		header.magic = BLK_MAGIC_V1;
-		header.flags = 0;
-		header.total_blocks = total_blocks;
-		header.index = i;
-		header.data_size = nread;
-		header.data_hash = adler32(buf, nread);
+		size_t size = (i*blocksize)+blocksize > filesize ?
+			filesize-(i*blocksize) : blocksize;
 
+		header.index = i;
+		header.data_size = size;
 		fwrite(&header, sizeof(struct blk_hdr), 1, out);
-		fwrite(buf, nread, 1, out);
-		i++;
+
+		uint64_t nread, total = 0;
+		uint16_t a = 1, b = 0;
+		while (total < size) {
+			nread = fread(buf, 1, total+READING_SIZE > size ?
+				size-total : READING_SIZE, file);
+			adler32_partial(buf, nread, &a, &b);
+			// total shouldn't be larger than size, but no need
+			// to do sanity checking
+			fwrite(buf, nread, 1, out);
+			total += nread;
+		}
+
+		// rewind to data_hash in header, & write the hash.
+		fseek(out, offsetof(struct blk_hdr, data_hash), SEEK_SET);
+		uint32_t hash = (b << 16) | a;
+		fwrite(&hash, sizeof(uint32_t), 1, out);
 	}
 	free(buf);
 
@@ -57,9 +75,14 @@ void recombine_files(int numfiles, char *filenames[], const char
 		if ((fread(&header, sizeof(struct blk_hdr), 1, file)) == 0)
 			break;
 
+		// validate the header
 		if (header.magic != BLK_MAGIC_V1) {
 			free(handle_arr);
 			error("Operation incomplete. File has invalid magic.");
+		} else if (header.total_blocks > (uint64_t)numfiles) {
+			fprintf(stderr, "warning: too little blocks given\n");
+		} else if (header.total_blocks < (uint64_t)numfiles) {
+			fprintf(stderr, "warning: too many blocks given\n");
 		}
 
 		if (handle_arr == NULL) {

@@ -59,12 +59,6 @@ void adler32_partial(uint8_t *buf, size_t size, uint16_t *a, uint16_t *b) {
 	}
 }
 
-uint32_t adler32(uint8_t *buf, size_t size) {
-	uint16_t a = 1, b = 0;
-	adler32_partial(buf, size, &a, &b);
-	return (b << 16) | a;
-}
-
 // this maybe should be in `blocks.c`, only used for one `qsort` call
 int cmp_block_handler(const void * a, const void * b) {
 	struct blk_hdr header_a = ((struct block_handler *)a)->header;
