@@ -1,5 +1,5 @@
 # blocks
-blocks is a CLI utility to split up and recombine files. Archives made by blocks are generated with special filenames, but these archives can be renamed 
+blocks is a CLI utility to split up and recombine files. Archives made by blocks are generated with conventional filenames, but these archives can be renamed 
 without consequence. Usage can be found in the man page `blocks(1)`.
 
 ### Building
