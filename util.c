@@ -11,7 +11,7 @@ void error(const char *str) {
 	exit(1);
 }
 
-void perror_wrapper() {
+void perror_wrapper(void) {
 	perror("fatal error");
 	exit(1);
 }

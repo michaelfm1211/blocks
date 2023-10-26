@@ -3,13 +3,13 @@ PREFIX = /usr/local
 SRCS := $(wildcard *.c)
 OBJS := $(SRCS:.c=.o)
 
-CFLAGS := -Wall -Wextra
+CFLAGS := -Wall -Wextra -Werror -pedantic -std=c99
 
 all: CFLAGS += -O2 -c
 all: blocks docs
 
 .PHONY: debug
-debug: CFLAGS += -O0 -g -fsanitize=address
+debug: CFLAGS += -O0 -g -fsanitize=address -fsanitize=undefined
 debug:
 	$(CC) $(CFLAGS) -o blocks $(SRCS)
 

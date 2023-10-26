@@ -8,7 +8,7 @@
 void error(const char *str);
 
 // Wrapper around perror to act like error()
-void perror_wrapper();
+void perror_wrapper(void);
 
 // Converts a string with byte units to bytes. ex: "10K" => 10240
 size_t conv_size_str(const char *str);
